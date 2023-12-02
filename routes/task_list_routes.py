@@ -28,6 +28,7 @@ class TaskListRoutes(Blueprint):
         Method in charge of setting the endpoints.
         """
         self.route('/api/task_lists', methods=['GET'])(self.get_task_lists)
+        self.route('/api/task_lists/<int:task_list_id>', methods=['DELETE'])(self.delete_task_list)
         
     def get_task_lists(self):
         """
@@ -43,4 +44,26 @@ class TaskListRoutes(Blueprint):
         except Exception as e:
             log.exception(f'Error getting data from the database: {e}')
             return jsonify({'error': 'Failed to get data from the database'}), 500
+    
+    def delete_task_list(self, task_list_id):
+        """
+        Method in charge of deleting a task list
+
+        Args:
+            task_list_id: Id from the task list we want to delete.
+        
+        Returns:
+            A json response with success and a 200 code, an error and a 500 code or an error and a 404 code.
+        """
+        try:
+            self.task_list_deleted = self.task_list_service.delete_task_list(task_list_id)
+            log.debug(f'{self.task_list_deleted}')
+            if self.task_list_deleted:
+                return jsonify(self.task_list_deleted), 200
+            else:
+                log.error('Task list not found')
+                return jsonify({'error': 'Task list not found'}), 404
+        except Exception as e:
+            log.exception(f'Error deleting data from the database: {e}')
+            return jsonify({'error': 'Failed to delete data from the database'}), 500
     
