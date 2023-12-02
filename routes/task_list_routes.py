@@ -39,7 +39,6 @@ class TaskListRoutes(Blueprint):
         """
         try:
             self.task_lists = self.task_list_service.get_all_task_lists()
-            log.info('Succesful request, fetched task lists')
             return jsonify(self.task_lists), 200
         except Exception as e:
             log.exception(f'Error getting data from the database: {e}')

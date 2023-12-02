@@ -25,6 +25,7 @@ class TaskListService:
         """
         try:
             self.task_lists= list(self.db_connector.db.task_lists.find())
+            log.info('Succesful request, fetched task lists')
             return self.task_lists
         except Exception as e:
             log.critical(f'Error fetching all task lists from the database: {e}')
