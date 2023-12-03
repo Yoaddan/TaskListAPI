@@ -48,6 +48,31 @@ class TaskListService:
             log.critical(f'Error fetching the task list id from the database: {e}')
             return jsonify({'error': f'Error fetching the task list id from the database: {e}'}), 500
         
+    def get_filtered_tasks_by_status(self, status):
+        """
+        Method in charge of filtering tasks by status complete or pending across all task lists.
+
+        Args:
+            status: Status to filter tasks by (complete or pending).
+
+        Returns:
+            A list of task lists with filtered tasks or an error and a 500 code.
+        """
+        try:
+            filtered_task_lists = []
+            all_task_lists = self.get_all_task_lists()
+            for task_list in all_task_lists:
+                filtered_tasks = [task for task in task_list.get('tasks', []) if task.get('status').lower() == status]
+                log.debug(f'filtered_tasks: {filtered_tasks}')
+                filtered_task_list = dict(task_list)
+                filtered_task_list['tasks'] = filtered_tasks
+                filtered_task_lists.append(filtered_task_list)
+            log.info('Tasks filtered succesfully')
+            return filtered_task_lists
+        except Exception as e:
+            log.critical(f'Error filtering tasks by status: {e}')
+            return jsonify({'error': f'Error filtering tasks by status: {e}'}), 500
+        
     def delete_task_list(self, task_list_id):
         """
         Method in charge of deleting a task list
