@@ -29,6 +29,7 @@ class TaskListRoutes(Blueprint):
         """
         self.route('/api/task_lists', methods=['GET'])(self.get_task_lists)
         self.route('/api/task_lists/tasks/<string:status>', methods=['GET'])(self.get_filtered_tasks_by_status)
+        self.route('/api/task_lists/tasks/task_list=<int:task_list_id>/task=<int:task_id>', methods=['PUT'])(self.update_task_status)  
         self.route('/api/task_lists/<int:task_list_id>', methods=['DELETE'])(self.delete_task_list)
         
     def get_task_lists(self):
@@ -64,7 +65,33 @@ class TaskListRoutes(Blueprint):
         except Exception as e:
             log.exception(f'Error filtering tasks: {e}')
             return jsonify({'error': 'Failed to filter tasks'}), 500
-    
+        
+    def update_task_status(self, task_list_id, task_id):
+        """
+        Method in charge of updating the status of a task from 'pending' to 'complete' and vice versa.
+
+        Args:
+            task_list_id: Id of the task list containing the task.
+            task_id: Id of the task to update.
+
+        Returns:
+            A message indicating the status update, an error and a 404 code or an error and a 500 code.
+        """
+        try:
+            self.result = self.task_list_service.update_task_status(task_list_id, task_id)
+            if self.result:
+                if self.result == 'task':
+                    log.error('Task not found')
+                    return jsonify({'error': 'Task not found'}), 404
+                else:
+                    return jsonify(self.result), 200
+            else:
+                log.error('Task list not found')
+                return jsonify({'error': 'Task list not found'}), 404
+        except Exception as e:
+            log.exception(f'Error updating task status: {e}')
+            return jsonify({'error': 'Error updating task status'}), 500
+
     def delete_task_list(self, task_list_id):
         """
         Method in charge of deleting a task list
