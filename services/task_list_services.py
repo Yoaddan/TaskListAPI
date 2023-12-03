@@ -73,6 +73,63 @@ class TaskListService:
             log.critical(f'Error filtering tasks by status: {e}')
             return jsonify({'error': f'Error filtering tasks by status: {e}'}), 500
         
+    def get_task_by_id(self, task_list_id, task_id):
+        """
+        Method in charge of obtaining a task by its id within a specific task list.
+
+        Args:
+            task_list_id: Id of the task list containing the task.
+            task_id: Id of the task to be obtained.
+
+        Returns:
+            The task with the specified id, None if not found or an error with a 500 code.
+        """
+        try:
+            self.task_list = self.get_task_list_by_id(task_list_id)
+            if self.task_list:
+                for self.task in self.task_list.get('tasks', []):
+                    if self.task.get('_id') == task_id:
+                        log.info('Task obtained successfully')
+                        return self.task
+                return 'task'
+            return None
+        except Exception as e:
+            log.critical(f'Error obtaining task by id: {e}')
+            return jsonify({'error': f'Error obtaining task by id: {e}'}), 500
+    
+    def update_task_status(self, task_list_id, task_id):
+        """
+        Method to update the status of a task from 'pending' to 'complete' and vice versa.
+
+        Args:
+            task_list_id: Id of the task list containing the task.
+            task_id: Id of the task to update.
+
+        Returns:
+            A message indicating the status update or an error and a 500 code.
+        """
+        try:
+            self.task = self.get_task_by_id(task_list_id, task_id)
+            if self.task:
+                if self.task == 'task':
+                    return self.task
+                else:
+                    self.current_status = self.task.get('status')
+                    self.new_status = 'Complete' if self.current_status == 'Pending' else 'Pending'
+                    self.task['status'] = self.new_status
+                    self.update_query = {'_id': task_list_id, 'tasks._id': task_id}
+                    self.update_statement = {'$set': {'tasks.$.status': self.new_status}}
+                    self.db_connector.db.task_lists.update_one(self.update_query, self.update_statement)
+                    log.info(f'Task status updated successfully. New status: {self.new_status}')
+                    return {'status': 'Task status updated successfully', 'new_status': self.new_status}
+            else:
+                return None
+        except Exception as e:
+            log.critical(f'Error updating task status: {e}')
+            return jsonify({'error': f'Error updating task status: {e}'}), 500
+
+
+        
     def delete_task_list(self, task_list_id):
         """
         Method in charge of deleting a task list
