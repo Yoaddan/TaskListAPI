@@ -56,7 +56,7 @@ class TaskListService:
             status: Status to filter tasks by (complete or pending).
 
         Returns:
-            A list of task lists with filtered tasks, a not match criteria message or an error and a 500 code.
+            A list of task lists with filtered tasks or an error and a 500 code.
         """
         try:
             filtered_task_lists = []
