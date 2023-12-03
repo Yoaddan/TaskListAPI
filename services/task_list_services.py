@@ -15,7 +15,6 @@ class TaskListService:
         """
         self.db_connector = db_connector
         
-
     def get_all_task_lists(self):
         """
         Method to get all task lists in the DB.
@@ -128,8 +127,6 @@ class TaskListService:
             log.critical(f'Error updating task status: {e}')
             return jsonify({'error': f'Error updating task status: {e}'}), 500
 
-
-        
     def delete_task_list(self, task_list_id):
         """
         Method in charge of deleting a task list
