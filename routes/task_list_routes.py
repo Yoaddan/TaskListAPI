@@ -29,10 +29,10 @@ class TaskListRoutes(Blueprint):
         """
         Method in charge of setting the endpoints.
         """
-        self.route('/api/task_lists', methods=['GET'])(self.get_task_lists)
-        self.route('/api/task_lists/tasks/<string:status>', methods=['GET'])(self.get_filtered_tasks_by_status)
-        self.route('/api/task_lists/tasks/task_list=<int:task_list_id>/task=<int:task_id>', methods=['PUT'])(self.update_task_status)  
-        self.route('/api/task_lists/<int:task_list_id>', methods=['DELETE'])(self.delete_task_list)
+        self.route('/apitasklist/task_lists', methods=['GET'])(self.get_task_lists)
+        self.route('/apitasklist/task_lists/tasks/<string:status>', methods=['GET'])(self.get_filtered_tasks_by_status)
+        self.route('/apitasklist/task_lists/tasks/task_list=<int:task_list_id>/task=<int:task_id>', methods=['PUT'])(self.update_task_status)  
+        self.route('/apitasklist/task_lists/<int:task_list_id>', methods=['DELETE'])(self.delete_task_list)
         
     def get_task_lists(self):
         """
