@@ -28,6 +28,7 @@ class TaskListRoutes(Blueprint):
         Method in charge of setting the endpoints.
         """
         self.route('/api/task_lists', methods=['GET'])(self.get_task_lists)
+        self.route('/api/task_lists/tasks/<string:status>', methods=['GET'])(self.get_filtered_tasks_by_status)
         self.route('/api/task_lists/<int:task_list_id>', methods=['DELETE'])(self.delete_task_list)
         
     def get_task_lists(self):
@@ -43,6 +44,26 @@ class TaskListRoutes(Blueprint):
         except Exception as e:
             log.exception(f'Error getting data from the database: {e}')
             return jsonify({'error': 'Failed to get data from the database'}), 500
+    
+    def get_filtered_tasks_by_status(self, status):
+        """
+        Method in charge of filtering tasks by status complete or pending across all task lists.
+
+        Args:
+            status: Status to filter tasks by (complete or pending).
+
+        Returns:
+            A json response including the lists with filtered tasks and a 200 code, an error and a 400 code or an error and a 500 code.
+        """
+        try:
+            if status.lower() in ['complete', 'pending']:
+                filtered_tasks = self.task_list_service.get_filtered_tasks_by_status(status.lower())
+                return jsonify(filtered_tasks), 200
+            else:
+                return jsonify({'error': 'Invalid status parameter'}), 400
+        except Exception as e:
+            log.exception(f'Error filtering tasks: {e}')
+            return jsonify({'error': 'Failed to filter tasks'}), 500
     
     def delete_task_list(self, task_list_id):
         """
