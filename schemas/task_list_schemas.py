@@ -39,7 +39,7 @@ class TaskSchema:
             ValidationError: If the status is not "Complete" or "Pending".
         """
         if value not in ['Complete', 'Pending']:
-            raise ValidationError('Status must be "Complete" or "Pending".')
+            raise ValidationError('Status must be Complete or Pending.')
 
 class TaskListSchema:
     """
@@ -63,7 +63,7 @@ class TaskListSchema:
             ValidationError: If the color is not a valid hexadecimal value with exactly 6 characters.
         """
         if not re.match(r'^#[0-9a-fA-F]{6}$', value):
-            raise ValidationError('Color must be a valid hexadecimal value with exactly 6 characters (e.g., "#RRGGBB").')
+            raise ValidationError('Color must be a valid hexadecimal value with exactly 6 characters (e.g., #RRGGBB).')
     
 
 
