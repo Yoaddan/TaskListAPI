@@ -58,16 +58,16 @@ class TaskListService:
             A list of task lists with filtered tasks or an error and a 500 code.
         """
         try:
-            filtered_task_lists = []
-            all_task_lists = self.get_all_task_lists()
-            for task_list in all_task_lists:
-                filtered_tasks = [task for task in task_list.get('tasks', []) if task.get('status').lower() == status]
-                log.debug(f'filtered_tasks: {filtered_tasks}')
-                filtered_task_list = dict(task_list)
-                filtered_task_list['tasks'] = filtered_tasks
-                filtered_task_lists.append(filtered_task_list)
+            self.filtered_task_lists = []
+            self.all_task_lists = self.get_all_task_lists()
+            for self.task_list in self.all_task_lists:
+                self.filtered_tasks = [self.task for self.task in self.task_list.get('tasks', []) if self.task.get('status').lower() == status]
+                log.debug(f'filtered_tasks: {self.filtered_tasks}')
+                self.filtered_task_list = dict(self.task_list)
+                self.filtered_task_list['tasks'] = self.filtered_tasks
+                self.filtered_task_lists.append(self.filtered_task_list)
             log.info('Tasks filtered succesfully')
-            return filtered_task_lists
+            return self.filtered_task_lists
         except Exception as e:
             log.critical(f'Error filtering tasks by status: {e}')
             return jsonify({'error': f'Error filtering tasks by status: {e}'}), 500

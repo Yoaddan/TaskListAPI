@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from logger.logger_base import log
 from marshmallow import ValidationError
 
@@ -10,17 +10,19 @@ class TaskListRoutes(Blueprint):
         Blueprint: Instance of flask Blueprint class.
     """
 
-    def __init__(self, task_list_service, task_list_schema):
+    def __init__(self, task_list_service, task_list_schema, task_schema):
         """
         Constructor of the TaskListService Class.
 
         Args:
             task_list_service: Instance that implements the Service.
-            task_list_schema: Instance for validations.
+            task_list_schema: Instance for task list validations.
+            task_schema: Instance for task validations.
         """
         super().__init__('task_list', __name__)
         self.task_list_service = task_list_service
         self.task_list_schema = task_list_schema
+        self.task_schema = task_schema
         self.register_routes()
 
     def register_routes(self):
@@ -57,11 +59,13 @@ class TaskListRoutes(Blueprint):
             A json response including the lists with filtered tasks and a 200 code, an error and a 400 code or an error and a 500 code.
         """
         try:
-            if status.lower() in ['complete', 'pending']:
-                filtered_tasks = self.task_list_service.get_filtered_tasks_by_status(status.lower())
-                return jsonify(filtered_tasks), 200
-            else:
-                return jsonify({'error': 'Invalid status parameter'}), 400
+            try:
+                self.task_schema.validate_status(status)
+                self.filtered_tasks = self.task_list_service.get_filtered_tasks_by_status(status.lower())
+                return jsonify(self.filtered_tasks), 200
+            except ValidationError as e:
+                 log.error({'error': 'Invalid data', 'details': e.messages})
+                 return(jsonify({'error': 'Invalid data', 'details': e.messages}), 400)
         except Exception as e:
             log.exception(f'Error filtering tasks: {e}')
             return jsonify({'error': 'Failed to filter tasks'}), 500
