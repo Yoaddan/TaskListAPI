@@ -31,7 +31,7 @@ task_schemas = TaskSchema()
 task_list_blueprint = TaskListRoutes(task_list_services, task_list_schemas, task_schemas)
 app.register_blueprint(task_list_blueprint)
 
-CORS(app, resources={r'/apitasklist/*': {'origins': 'https://localhost:3000'}})
+CORS(app, resources={r'/apitasklist/*': {'origins': 'http://localhost:3000'}})
 
 if __name__ == '__main__':
     try:
