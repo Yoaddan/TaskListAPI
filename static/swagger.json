@@ -1,0 +1,226 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Task List API",
+        "description": "API for managing task lists and tasks.",
+        "version": "1.0"
+    },
+    "paths": {
+        "/apitasklist/task_lists": {
+            "get": {
+                "summary": "Get all task lists",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                            "$ref": "#/definitions/TaskList"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get data from the database",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/apitasklist/task_lists/tasks/{status}": {
+            "get": {
+                "summary": "Filter tasks by status, gets all task lists",
+                "parameters": [
+                    {
+                    "name": "status",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "Status to filter tasks by (complete or pending)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TaskList"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to filter tasks",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/apitasklist/task_lists/tasks/task_list={task_list_id}/task={task_id}": {
+            "put": {
+                "summary": "Update task status to Complete or Pending",
+                "parameters": [
+                    {
+                    "name": "task_list_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer",
+                    "description": "Id of the task list containing the task"
+                    },
+                    {
+                    "name": "task_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer",
+                    "description": "Id of the task to update"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Task status updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/StatusUpdate"
+                        }
+                    },
+                    "404": {
+                        "description": "Task or Task list not found",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Error updating task status",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/apitasklist/task_lists/{task_list_id}": {
+            "delete": {
+                "summary": "Delete task list by id",
+                "parameters": [
+                    {
+                    "name": "task_list_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer",
+                    "description": "Id from the task list to delete"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Task list deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/Status"
+                        }
+                    },
+                    "404": {
+                        "description": "Task list not found",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete data from the database",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "TaskList": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Task"
+                    }
+                }
+            }
+        },
+        "Task": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "due": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "StatusUpdate": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Status message"
+                },
+                "new_status": {
+                    "type": "string",
+                    "description": "New task status"
+                }
+            }
+        },
+        "Status": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Status message"
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "description": "Error message"
+                },
+                "details": {
+                    "type": "string",
+                    "description": "Details of the error"
+                }
+            }
+        }
+    }
+}
+  
