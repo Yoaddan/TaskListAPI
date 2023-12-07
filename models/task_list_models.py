@@ -22,9 +22,9 @@ class TaskListModel:
             ValueError: In case environment variables don´t exist.
             Exception: In case of a connection exception.
         """
-        mongodb_user = "admin" #os.environ.get('MONGODB_USER')
-        mongodb_pass = "8866" #os.environ.get('MONGODB_PASS')
-        mongodb_host = "localhost" #os.environ.get('MONGODB_HOST')
+        mongodb_user = os.environ.get('MONGODB_USER')
+        mongodb_pass = os.environ.get('MONGODB_PASS')
+        mongodb_host = os.environ.get('MONGODB_HOST')
 
         required_variables = {'MONGODB_USER': mongodb_user, 'MONGODB_PASS': mongodb_pass, 'MONGODB_HOST': mongodb_host}
 
