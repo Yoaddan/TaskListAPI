@@ -42,7 +42,7 @@ class TaskListModel:
                 authSource='admin',
                 authMechanism='SCRAM-SHA-256'
             )
-            self.db = self.client['task_list_management_system']
+            self.db = self.client['TaskManagement']
         except Exception as e:
             log.critical(f'Failed to connect to the database: {e}')
             raise
